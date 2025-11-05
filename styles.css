@@ -327,96 +327,6 @@ header h1 {
     }
 }
 
-/* 字体管理 */
-.font-management {
-    background: #e8f0fe;
-    padding: 15px;
-    border-radius: 8px;
-    border: 2px solid #667eea;
-}
-
-.font-management label {
-    color: #667eea;
-    font-weight: 600;
-}
-
-.font-management input[type="text"] {
-    margin-bottom: 10px;
-}
-
-.btn-small {
-    padding: 8px 16px;
-    font-size: 14px;
-    min-width: auto;
-    flex: none;
-}
-
-/* 模态框 */
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal-content {
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    max-width: 600px;
-    width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-}
-
-.modal-content h3 {
-    color: #667eea;
-    margin-bottom: 20px;
-}
-
-.font-list {
-    margin-bottom: 20px;
-}
-
-.font-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px;
-    background: #f8f9fa;
-    border-radius: 8px;
-    margin-bottom: 10px;
-}
-
-.font-item-info {
-    flex: 1;
-}
-
-.font-item-name {
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 4px;
-}
-
-.font-item-url {
-    font-size: 12px;
-    color: #888;
-    word-break: break-all;
-}
-
-.font-item button {
-    padding: 6px 12px;
-    font-size: 14px;
-    min-width: auto;
-}
-
 @media (max-width: 480px) {
     body {
         padding: 5px;
@@ -447,9 +357,5 @@ header h1 {
     .btn {
         min-width: auto;
         flex: 1 1 calc(50% - 4px);
-    }
-
-    .modal-content {
-        padding: 20px;
     }
 }

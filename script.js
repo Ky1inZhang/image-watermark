@@ -10,9 +10,6 @@ let bgDragMode = false;
 let imageOffsetX = 0;
 let imageOffsetY = 0;
 let scale = 1;
-let customFonts = []; // 存储自定义字体
-
-// jQuery 风格的简化函数
 const $ = (id) => document.getElementById(id);
 
 // 文字对象类
@@ -118,9 +115,6 @@ document.addEventListener('DOMContentLoaded', function() {
     canvas = $('canvas');
     ctx = canvas.getContext('2d');
 
-    // 加载自定义字体
-    loadCustomFonts();
-
     // 图片上传
     $('imageInput').addEventListener('change', handleImageUpload);
 
@@ -130,11 +124,6 @@ document.addEventListener('DOMContentLoaded', function() {
     $('downloadBtn').addEventListener('click', downloadImage);
     $('resetBtn').addEventListener('click', reset);
     $('saveSettingsBtn').addEventListener('click', saveSettings);
-
-    // 字体管理按钮
-    $('addFontBtn').addEventListener('click', addCustomFont);
-    $('manageFontsBtn').addEventListener('click', openFontModal);
-    $('closeFontModal').addEventListener('click', closeFontModal);
 
     // 文字控制
     $('textContent').addEventListener('input', updateTextContent);
@@ -777,202 +766,3 @@ window.addEventListener('resize', function() {
         render();
     }
 });
-
-// ==================== 字体管理功能 ====================
-
-// 加载自定义字体
-async function loadCustomFonts() {
-    const saved = localStorage.getItem('customFonts');
-    if (saved) {
-        try {
-            customFonts = JSON.parse(saved);
-
-            // 动态加载所有保存的字体
-            for (const font of customFonts) {
-                await loadFont(font.name, font.url);
-            }
-
-            // 更新字体下拉列表
-            updateFontDropdown();
-        } catch (e) {
-            console.error('加载字体配置失败:', e);
-        }
-    }
-}
-
-// 动态加载字体
-async function loadFont(fontName, fontUrl) {
-    try {
-        // 使用 FontFace API 动态加载字体
-        const fontFace = new FontFace(fontName, `url(${fontUrl})`);
-
-        // 加载字体
-        await fontFace.load();
-
-        // 添加到文档
-        document.fonts.add(fontFace);
-
-        console.log(`字体 "${fontName}" 加载成功`);
-        return true;
-    } catch (error) {
-        console.error(`字体 "${fontName}" 加载失败:`, error);
-        return false;
-    }
-}
-
-// 添加自定义字体
-async function addCustomFont() {
-    const nameInput = $('customFontName');
-    const urlInput = $('customFontUrl');
-
-    const fontName = nameInput.value.trim();
-    const fontUrl = urlInput.value.trim();
-
-    if (!fontName || !fontUrl) {
-        alert('请输入字体名称和URL');
-        return;
-    }
-
-    // 检查是否已存在
-    if (customFonts.some(f => f.name === fontName)) {
-        alert('字体名称已存在');
-        return;
-    }
-
-    // 显示加载提示
-    const btn = $('addFontBtn');
-    const originalText = btn.textContent;
-    btn.textContent = '加载中...';
-    btn.disabled = true;
-
-    // 尝试加载字体
-    const success = await loadFont(fontName, fontUrl);
-
-    if (success) {
-        // 保存到配置
-        customFonts.push({ name: fontName, url: fontUrl });
-        localStorage.setItem('customFonts', JSON.stringify(customFonts));
-
-        // 更新下拉列表
-        updateFontDropdown();
-
-        // 清空输入框
-        nameInput.value = '';
-        urlInput.value = '';
-
-        // 显示成功提示
-        btn.textContent = '添加成功！';
-        btn.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
-        setTimeout(() => {
-            btn.textContent = originalText;
-            btn.style.background = '';
-            btn.disabled = false;
-        }, 1500);
-    } else {
-        alert('字体加载失败，请检查URL是否正确');
-        btn.textContent = originalText;
-        btn.disabled = false;
-    }
-}
-
-// 更新字体下拉列表
-function updateFontDropdown() {
-    const select = $('fontFamily');
-
-    // 获取当前选中的字体
-    const currentValue = select.value;
-
-    // 清空现有的自定义字体选项（保留系统字体）
-    const systemFonts = [
-        'MiSans Latin',
-        'Arial',
-        'Microsoft YaHei',
-        'SimHei',
-        'SimSun',
-        'KaiTi',
-        'Courier New'
-    ];
-
-    // 重新构建选项
-    select.innerHTML = '';
-
-    // 添加系统字体
-    systemFonts.forEach(font => {
-        const option = document.createElement('option');
-        option.value = font;
-        option.textContent = font;
-        select.appendChild(option);
-    });
-
-    // 添加分隔符（如果有自定义字体）
-    if (customFonts.length > 0) {
-        const separator = document.createElement('option');
-        separator.disabled = true;
-        separator.textContent = '--- 自定义字体 ---';
-        select.appendChild(separator);
-
-        // 添加自定义字体
-        customFonts.forEach(font => {
-            const option = document.createElement('option');
-            option.value = font.name;
-            option.textContent = font.name;
-            select.appendChild(option);
-        });
-    }
-
-    // 恢复之前的选择
-    if (currentValue && Array.from(select.options).some(opt => opt.value === currentValue)) {
-        select.value = currentValue;
-    }
-}
-
-// 打开字体管理弹窗
-function openFontModal() {
-    updateFontList();
-    $('fontModal').style.display = 'flex';
-}
-
-// 关闭字体管理弹窗
-function closeFontModal() {
-    $('fontModal').style.display = 'none';
-}
-
-// 更新字体列表显示
-function updateFontList() {
-    const fontList = $('fontList');
-
-    if (customFonts.length === 0) {
-        fontList.innerHTML = '<p style="color: #888; text-align: center;">暂无自定义字体</p>';
-        return;
-    }
-
-    fontList.innerHTML = '';
-
-    customFonts.forEach((font, index) => {
-        const fontItem = document.createElement('div');
-        fontItem.className = 'font-item';
-
-        fontItem.innerHTML = `
-            <div class="font-item-info">
-                <div class="font-item-name">${font.name}</div>
-                <div class="font-item-url">${font.url}</div>
-            </div>
-            <button class="btn btn-danger" onclick="deleteCustomFont(${index})">删除</button>
-        `;
-
-        fontList.appendChild(fontItem);
-    });
-}
-
-// 删除自定义字体
-function deleteCustomFont(index) {
-    if (!confirm(`确定要删除字体 "${customFonts[index].name}" 吗？`)) {
-        return;
-    }
-
-    customFonts.splice(index, 1);
-    localStorage.setItem('customFonts', JSON.stringify(customFonts));
-
-    updateFontDropdown();
-    updateFontList();
-}
