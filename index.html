@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>照片水印编辑器</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- EXIF 库用于修改照片元数据 -->
+    <script src="https://cdn.jsdelivr.net/npm/piexifjs@1.0.6/piexif.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>照片水印编辑器</h1>
+        </header>
+
+        <div class="upload-section" id="uploadSection">
+            <label for="imageInput" class="upload-btn">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span>点击上传图片</span>
+            </label>
+            <input type="file" id="imageInput" accept="image/*" style="display: none;">
+        </div>
+
+        <div class="editor-section" id="editorSection" style="display: none;">
+            <div class="canvas-container">
+                <canvas id="canvas"></canvas>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <button id="addTextBtn" class="btn btn-primary">添加文字</button>
+                    <button id="downloadBtn" class="btn btn-success">下载图片</button>
+                    <button id="resetBtn" class="btn">重新上传</button>
+                </div>
+
+                <div id="textControls" class="text-controls" style="display: none;">
+                    <h3>文字设置</h3>
+
+                    <div class="control-item">
+                        <label>文字内容：</label>
+                        <input type="text" id="textContent" placeholder="输入文字内容">
+                    </div>
+
+                    <div class="control-item">
+                        <label>字体：</label>
+                        <select id="fontFamily">
+                            <option value="MiSans Latin">MiSans Latin</option>
+                            <option value="Arial">Arial</option>
+                            <option value="Microsoft YaHei">微软雅黑</option>
+                            <option value="SimHei">黑体</option>
+                            <option value="SimSun">宋体</option>
+                            <option value="KaiTi">楷体</option>
+                            <option value="Courier New">Courier New</option>
+                        </select>
+                    </div>
+
+                    <div class="control-item font-management">
+                        <label>添加自定义字体：</label>
+                        <input type="text" id="customFontName" placeholder="字体名称">
+                        <input type="text" id="customFontUrl" placeholder="字体URL (TTF/WOFF/WOFF2)">
+                        <button id="addFontBtn" class="btn btn-small">添加字体</button>
+                        <button id="manageFontsBtn" class="btn btn-small">管理字体</button>
+                    </div>
+
+                    <div class="control-item">
+                        <label>X 坐标：<span id="posXValue">0</span>px</label>
+                        <div class="input-with-buttons">
+                            <button class="btn-adjust" id="posXMinus">-</button>
+                            <input type="range" id="posX" min="0" max="1000" value="0">
+                            <button class="btn-adjust" id="posXPlus">+</button>
+                        </div>
+                    </div>
+
+                    <div class="control-item">
+                        <label>Y 坐标：<span id="posYValue">0</span>px</label>
+                        <div class="input-with-buttons">
+                            <button class="btn-adjust" id="posYMinus">-</button>
+                            <input type="range" id="posY" min="0" max="1000" value="0">
+                            <button class="btn-adjust" id="posYPlus">+</button>
+                        </div>
+                    </div>
+
+                    <div class="control-item">
+                        <label>字号：<span id="fontSizeValue">9</span>px</label>
+                        <div class="input-with-buttons">
+                            <button class="btn-adjust" id="fontSizeMinus">-</button>
+                            <input type="range" id="fontSize" min="6" max="80" value="9">
+                            <button class="btn-adjust" id="fontSizePlus">+</button>
+                        </div>
+                    </div>
+
+                    <div class="control-item">
+                        <label>字间距：<span id="letterSpacingValue">1</span>px</label>
+                        <div class="input-with-buttons">
+                            <button class="btn-adjust" id="letterSpacingMinus">-</button>
+                            <input type="range" id="letterSpacing" min="-10" max="50" value="1">
+                            <button class="btn-adjust" id="letterSpacingPlus">+</button>
+                        </div>
+                    </div>
+
+                    <div class="control-item">
+                        <label>颜色：</label>
+                        <input type="color" id="textColor" value="#ffffff">
+                    </div>
+
+                    <div class="control-item">
+                        <label>透明度：<span id="opacityValue">100</span>%</label>
+                        <input type="range" id="opacity" min="0" max="100" value="100">
+                    </div>
+
+                    <div class="control-group">
+                        <button id="deleteTextBtn" class="btn btn-danger">删除文字</button>
+                        <button id="saveSettingsBtn" class="btn btn-primary">保存设置</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>使用说明：</h3>
+            <ul>
+                <li>点击"添加文字"创建新的水印文字</li>
+                <li>拖动文字可以调整位置</li>
+                <li>点击文字可以选中并编辑属性</li>
+                <li>支持触摸和鼠标操作</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 字体管理弹窗 -->
+    <div id="fontModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>管理自定义字体</h3>
+            <div id="fontList" class="font-list"></div>
+            <button id="closeFontModal" class="btn">关闭</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

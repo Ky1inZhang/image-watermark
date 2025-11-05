@@ -1,0 +1,455 @@
+/* 加载自定义字体 */
+@font-face {
+    font-family: 'MiSans Latin';
+    src: url('MiSansLatin-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Microsoft YaHei', Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 10px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+header {
+    text-align: center;
+    color: white;
+    padding: 20px 0;
+}
+
+header h1 {
+    font-size: 28px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.upload-section {
+    background: white;
+    border-radius: 15px;
+    padding: 60px 20px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.upload-btn {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 40px 60px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.upload-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.upload-btn:active {
+    transform: translateY(0);
+}
+
+.upload-btn span {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.editor-section {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.canvas-container {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 20px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+}
+
+#canvas {
+    display: block;
+    max-width: 100%;
+    max-height: 70vh;
+    cursor: move;
+    touch-action: none;
+}
+
+.controls {
+    padding: 20px;
+}
+
+.control-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+    flex: 1;
+    min-width: 120px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+    color: white;
+}
+
+.btn:not(.btn-primary):not(.btn-success):not(.btn-danger) {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn.active {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+}
+
+.text-controls {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.text-controls h3 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.control-item {
+    margin-bottom: 15px;
+}
+
+.control-item label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+    font-weight: 500;
+}
+
+.control-item input[type="text"],
+.control-item select {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border-color 0.2s;
+}
+
+.control-item input[type="text"]:focus,
+.control-item select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.control-item input[type="range"] {
+    width: 100%;
+    height: 6px;
+    background: #ddd;
+    border-radius: 3px;
+    outline: none;
+    flex: 1;
+}
+
+.input-with-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-adjust {
+    width: 36px;
+    height: 36px;
+    border: 2px solid #667eea;
+    background: white;
+    color: #667eea;
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.btn-adjust:hover {
+    background: #667eea;
+    color: white;
+}
+
+.btn-adjust:active {
+    transform: scale(0.95);
+}
+
+.control-item input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #667eea;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.control-item input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #667eea;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+}
+
+.control-item input[type="color"] {
+    width: 100%;
+    height: 50px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.control-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.instructions {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.instructions h3 {
+    color: #667eea;
+    margin-bottom: 15px;
+}
+
+.instructions ul {
+    list-style-position: inside;
+    color: #555;
+    line-height: 1.8;
+}
+
+.instructions li {
+    margin-bottom: 8px;
+}
+
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 24px;
+    }
+
+    .upload-btn {
+        padding: 30px 40px;
+    }
+
+    .upload-btn span {
+        font-size: 16px;
+    }
+
+    .canvas-container {
+        min-height: 200px;
+    }
+
+    #canvas {
+        max-height: 50vh;
+    }
+
+    .controls {
+        padding: 10px;
+    }
+
+    .btn {
+        padding: 10px 16px;
+        font-size: 14px;
+        min-width: 100px;
+    }
+
+    .control-group {
+        gap: 8px;
+    }
+}
+
+/* 字体管理 */
+.font-management {
+    background: #e8f0fe;
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px solid #667eea;
+}
+
+.font-management label {
+    color: #667eea;
+    font-weight: 600;
+}
+
+.font-management input[type="text"] {
+    margin-bottom: 10px;
+}
+
+.btn-small {
+    padding: 8px 16px;
+    font-size: 14px;
+    min-width: auto;
+    flex: none;
+}
+
+/* 模态框 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content h3 {
+    color: #667eea;
+    margin-bottom: 20px;
+}
+
+.font-list {
+    margin-bottom: 20px;
+}
+
+.font-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.font-item-info {
+    flex: 1;
+}
+
+.font-item-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.font-item-url {
+    font-size: 12px;
+    color: #888;
+    word-break: break-all;
+}
+
+.font-item button {
+    padding: 6px 12px;
+    font-size: 14px;
+    min-width: auto;
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 5px;
+    }
+
+    header h1 {
+        font-size: 20px;
+        padding: 15px 0;
+    }
+
+    .upload-section {
+        padding: 40px 15px;
+    }
+
+    .upload-btn {
+        padding: 25px 30px;
+    }
+
+    .editor-section,
+    .instructions {
+        padding: 15px;
+    }
+
+    .text-controls {
+        padding: 15px;
+    }
+
+    .btn {
+        min-width: auto;
+        flex: 1 1 calc(50% - 4px);
+    }
+
+    .modal-content {
+        padding: 20px;
+    }
+}
